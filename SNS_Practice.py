@@ -36,4 +36,4 @@ sns.subscribe (
   Endpoint=queue.attributes["QueueArn"]
 )
 
-sendMessageToSNS (sns, "my queue works!")
+sendMessageToSNS (sns, "my queue works :)")
