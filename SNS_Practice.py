@@ -1,4 +1,5 @@
 import boto3
+import json
 
 def createTopic (sns, topicName):
   return sns.create_topic (
@@ -27,13 +28,26 @@ def createQueue (sqs, queueName):
 sns = boto3.client('sns')
 sqs = boto3.resource('sqs')
 
-topic = createTopic (sns, 'Test')
+# topic = createTopic (sns, 'Test')
 queue = createQueue(sqs, 'queue')
 
-sns.subscribe (
-  TopicArn = 'arn:aws:sns:us-east-1:951039571551:Test',
-  Protocol="sqs",
-  Endpoint=queue.attributes["QueueArn"]
+# sns.subscribe (
+#   TopicArn = 'arn:aws:sns:us-east-1:951039571551:Test',
+#   Protocol="sqs",
+#   Endpoint=queue.attributes["QueueArn"]
+# )
+
+# sendMessageToSNS (sns, "my queue works :)")
+
+sqsClient = boto3.client ('sqs')
+queueUrl = sqsClient.get_queue_url (
+  QueueName = "queue"
 )
 
-sendMessageToSNS (sns, "my queue works :)")
+messages = sqsClient.receive_message (
+  QueueUrl = queueUrl['QueueUrl'],
+  MaxNumberOfMessages = 1
+)
+print (messages)
+message_body = messages["Messages"][0]["Body"]
+print (message_body)
